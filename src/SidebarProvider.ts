@@ -41,6 +41,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         //   });
         //   break;
         // }
+        /*onInfo-> takes the value and return information message*/
         case "onInfo": {
           if (!data.value) {
             return;
@@ -48,6 +49,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showInformationMessage(data.value);
           break;
         }
+        /*onError-> takes the error and return error message*/
         case "onError": {
           if (!data.value) {
             return;
@@ -94,9 +96,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
         <link href="${styleMainUri}" rel="stylesheet">
+        <script nonce="${nonce}">
+          const ts_vscode = acquireVsCodeApi();
+          
+        </script>
       </head>
       <body>
-	      <script nonce="${nonce}" src="${scriptUri}"></script>
+        <script nonce="${nonce}" src="${scriptUri}"></script>
 		  </body>
 		</html>`;
   }

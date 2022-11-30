@@ -1,6 +1,7 @@
 //www.youtube.com/watch?v=a5DX5pQ9p5M&t=3632s
 import * as vscode from "vscode";
 import { HelloWorldPanel } from "./HelloWorldPanel";
+import { SidebarProvider } from "./SidebarProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "vscode-todo" is now active!');
@@ -11,6 +12,20 @@ export function activate(context: vscode.ExtensionContext) {
   //     vscode.window.showInformationMessage("Hello World from vscode_todo!");
   //   })
   // );
+ const sidebarProvider = new SidebarProvider(context.extensionUri);
+
+  // context.subscriptions.push(
+  //   vscode.window.registerWebviewViewProvider(
+  //     "vscode-todo-sidebar" /*should match the id of the view*/,
+  //     sidebarProvider
+  //   )
+  // );
+    context.subscriptions.push(
+      vscode.window.registerWebviewViewProvider(
+        "vscode-todo-sidebar", /*should match the id of the view*/
+        sidebarProvider
+      )
+    );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.refreshWebviews", () => {

@@ -32,7 +32,7 @@ export class HelloWorldPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       HelloWorldPanel.viewType,
-      "VSinder",
+      "HelloWorldPanel",
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
@@ -130,7 +130,7 @@ export class HelloWorldPanel {
   private _getHtmlForWebview(webview: vscode.Webview) {
     // And the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/HelloWorld.js")
+      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/helloWorld.js")
     );
 
     // Local path to css styles

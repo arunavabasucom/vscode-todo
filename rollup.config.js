@@ -17,7 +17,7 @@ export default fs
       input: "webviews/pages/" + input,
       output: {
         sourcemap: true,
-        format: "cjs",
+        format: "iife",
         name: "app",
         file: "out/compiled/" + name + ".js",
       },

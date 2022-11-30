@@ -10,12 +10,33 @@
     "Other"
   ],
   "activationEvents": [
+    "onView:vscode-todo-sidebar-view",
     "onCommand:vscode-todo.helloWorld",
     "onCommand:vscode-todo.askQuestion",
     "onCommand:vscode-todo.refreshWebviews"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-todo-sidebar-view",
+          "title": "vscode-todo",
+          "icon": "media/checklist.svg"
+        }
+      ]
+    },
+    "views": {
+      "vscode-todo-sidebar-view": [
+        {
+          "type": "webview",
+          "id": "vscode-todo-sidebar",
+          "name": "vscode-todo",
+          "icon": "media/checklist.svg",
+          "contextualTitle": "vscode-todo"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vscode-todo.helloWorld",
@@ -26,7 +47,7 @@
         "category": "vscode-todo",
         "title": "Ask a question"
       },
-       {
+      {
         "command": "vscode-todo.refreshWebviews",
         "category": "vscode-todo",
         "title": "Refresh webviews"
@@ -36,7 +57,7 @@
   "scripts": {
     "vscode:prepublish": "yarn run package",
     "compile": "webpack",
-    "watch": "concurrently \"rollup -c -w --bundleConfigAsCjs\" \"webpack --mode development --watch\"",
+    "watch": "concurrently \"rollup -c -w \" \"webpack --mode development --watch\"",
     "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
@@ -60,8 +81,8 @@
     "eslint": "^8.26.0",
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
-    "rollup": "^3.5.0",
-    "rollup-plugin-svelte": "^7.1.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-svelte": "^6.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "svelte": "^3.53.1",
     "svelte-check": "^2.9.2",
@@ -72,3 +93,4 @@
     "webpack-cli": "^4.10.0"
   }
 }
+

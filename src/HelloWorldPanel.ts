@@ -1,10 +1,5 @@
 import * as vscode from "vscode";
-// import { accessTokenKey, apiBaseUrl, refreshTokenKey } from "./constants";
-// import { flairMap, FlairProvider } from "./FlairProvider";
 import { getNonce } from "./getNonce";
-// import { mutationNoErr } from "./mutation";
-// import { Util } from "./Util";
-
 export class HelloWorldPanel {
   /**
    * Track the currently panel. Only allow a single panel to exist at a time.
@@ -107,6 +102,7 @@ export class HelloWorldPanel {
           if (!data.value) {
             return;
           }
+          /*getting info here and we are going to put all the js here */
           vscode.window.showInformationMessage(data.value);
           break;
         }

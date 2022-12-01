@@ -1,3 +1,4 @@
+//www.youtube.com/watch?v=a5DX5pQ9p5M
 import * as vscode from "vscode";
 import { HelloWorldPanel } from "./HelloWorldPanel";
 import { SidebarProvider } from "./SidebarProvider";
@@ -29,6 +30,23 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand("vscode-todo.addTodo", () => {
+        const { activeTextEditor } = vscode.window;
+        if (!activeTextEditor) {
+          vscode.window.showInformationMessage('No active window');
+          return;
+        }
+        const text = activeTextEditor.document.getText(
+          activeTextEditor.selection
+        );
+
+        vscode.window.showInformationMessage('Text:' + text);
+      })
+    );
+  
+  
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.helloWorld", () => {
       /* webview panel >> view */

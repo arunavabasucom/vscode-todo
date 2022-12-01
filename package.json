@@ -13,6 +13,7 @@
     "onView:vscode-todo-sidebar-view",
     "onCommand:vscode-todo.helloWorld",
     "onCommand:vscode-todo.askQuestion",
+    "onCommand:vscode-todo.addTodo",
     "onCommand:vscode-todo.refreshWebviews"
   ],
   "main": "./dist/extension.js",
@@ -51,6 +52,11 @@
         "command": "vscode-todo.refreshWebviews",
         "category": "vscode-todo",
         "title": "Refresh webviews"
+      },
+       {
+        "command": "vscode-todo.addTodo",
+        "category": "vscode-todo",
+        "title": "Add Todo from selection"
       }
     ]
   },

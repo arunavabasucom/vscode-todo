@@ -30,23 +30,34 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-
-    context.subscriptions.push(
-      vscode.commands.registerCommand("vscode-todo.addTodo", () => {
-        const { activeTextEditor } = vscode.window;
-        if (!activeTextEditor) {
-          vscode.window.showInformationMessage('No active window');
-          return;
-        }
-        const text = activeTextEditor.document.getText(
-          activeTextEditor.selection
-        );
-
-        vscode.window.showInformationMessage('Text:' + text);
-      })
-    );
+  /* create status bar */
+  const item = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right
+  );
+  item.text = "${file-code} Add Todo"; /*setting up the status bar name*/
+  item.command = "vscode-todo.addTodo";
+  item.show();
+  /* create status bar */
   
-  
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-todo.addTodo", () => {
+      const { activeTextEditor } = vscode.window;
+      if (!activeTextEditor) {
+        vscode.window.showInformationMessage("No active window");
+        return;
+      }
+      const text = activeTextEditor.document.getText(
+        activeTextEditor.selection
+      );
+      /*sending text message to webview*/
+      sidebarProvider._view?.webview.postMessage({
+        type: "new-todo",
+        value: text,
+      });
+      vscode.window.showInformationMessage("Text:" + text);
+    })
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.helloWorld", () => {
       /* webview panel >> view */

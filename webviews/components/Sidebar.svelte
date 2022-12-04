@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   type todos = {
     text: string;
     completed: boolean;
@@ -6,6 +8,17 @@
 
   let todos: todos[] = [];
   let text: string = "";
+  onMount(() => {
+    window.addEventListener("message", (event) => {
+      const message = event.data;
+
+      switch (message.type) {
+        case "new-todo" /*getting the message from the selection*/:
+          todos = [{ text: message.value, completed: false }, ...todos];
+          break;
+      }
+    });
+  });
 </script>
 
 <form

@@ -1,9 +1,15 @@
 //www.youtube.com/watch?v=a5DX5pQ9p5M
 import * as vscode from "vscode";
+import { auth } from "./auth";
 import { HelloWorldPanel } from "./HelloWorldPanel";
 import { SidebarProvider } from "./SidebarProvider";
+import { TokenManager } from "./TokenModel";
+
 
 export function activate(context: vscode.ExtensionContext) {
+  /*using global_state we are going to set the value*/
+  TokenManager.globalState = context.globalState;
+
   /*sidebar*/
   const sidebarProvider = new SidebarProvider(context.extensionUri);
   context.subscriptions.push(
@@ -38,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
   item.command = "vscode-todo.addTodo";
   item.show();
   /* create status bar */
-  
+
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.addTodo", () => {
       const { activeTextEditor } = vscode.window;
@@ -57,10 +63,20 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage("Text:" + text);
     })
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("vscode-todo.auth", () => {
+      /* webview panel >> view */
+      // HelloWorldPanel.createOrShow(context.extensionUri);
+      auth();
+    })
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.helloWorld", () => {
       /* webview panel >> view */
+      vscode.window.showInformationMessage(
+        `Token:` + TokenManager.getToken()
+      );
       HelloWorldPanel.createOrShow(context.extensionUri);
     })
   );

@@ -8,6 +8,7 @@ import { DataSource } from "typeorm";
 import { __prod__ } from "./constants";
 import { User } from "./Entities/User";
 import { Strategy as GitHubStrategy } from "passport-github2";
+import cors from "cors";
 
 /*loading env*/
 dotenv.config();
@@ -28,6 +29,7 @@ dotenv.config();
   passport.serializeUser((user: any, done) => {
     done(null, user.accessToken);
   });
+  app.use(cors({ origin: "*" }));
   app.use(passport.initialize());
 
   passport.use(
@@ -70,16 +72,45 @@ dotenv.config();
     "/auth/github/callback",
     passport.authenticate("github", { session: false }),
     (req: any, res) => {
-      res.send(req.user);
-      // res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+      res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
     }
   );
   /*auth*/
-
   app.get("/", (_req, res) => {
     res.send("Hello world");
   });
   app.listen(PORT, () => {
     console.log(`listening on ${PORT}`);
+  });
+
+  app.get("/me", async (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      res.send({ user: null });
+      return;
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      res.send({ user: null });
+      return;
+    }
+    let userId = null;
+    try {
+      const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      userId = payload.userId;
+    } catch (error) {
+      res.send({ user: null });
+      return;
+    }
+    if (!userId) {
+      console.log(`userid null`);
+      res.send({ user: null });
+      return;
+    }
+    const user = await User.find({ where: { id: userId } });
+    res.send({ user });
   });
 })();

@@ -8,7 +8,9 @@
 
   let todos: todos[] = [];
   let text: string = "";
-  onMount(() => {
+  let loading: boolean = true;
+  let user: { name: string; id: number } | null = null;
+  onMount(async () => {
     window.addEventListener("message", (event) => {
       const message = event.data;
 
@@ -18,8 +20,26 @@
           break;
       }
     });
+    const response = await fetch(`http://localhost:3002/me`,{
+      headers:{
+          authorization: `Bearer ${accessToken}`
+      }
+    });
+    const data = await response.json();
+    user = data.user;
+    loading = false;
   });
 </script>
+
+{#if loading}
+  <div>loading</div>
+{:else if user}
+  <pre>
+  {JSON.stringify(user,null,2)}
+</pre>
+{:else}
+  <div>no user is logged in</div>
+{/if}
 
 <form
   on:submit|preventDefault={() => {

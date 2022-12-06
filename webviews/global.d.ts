@@ -4,6 +4,6 @@ declare global {
     postMessage: ({ type: string, value: any }) => void;
   };
   const apiBaseUrl: string;
-  const accessToken:string;
+  // const accessToken:string;
   //ts_vscode: any;
 }

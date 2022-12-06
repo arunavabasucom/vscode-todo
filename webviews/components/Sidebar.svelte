@@ -1,33 +1,42 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  /*types*/
   type todos = {
     text: string;
     completed: boolean;
   };
+  /*types*/
 
+  /*variables*/
   let todos: todos[] = [];
   let text: string = "";
   let loading: boolean = true;
   let user: { name: string; id: number } | null = null;
+  let authToken: string = "";
+  /*variables*/
+
   onMount(async () => {
-    window.addEventListener("message", (event) => {
+    window.addEventListener("message", async(event) => {
       const message = event.data;
 
       switch (message.type) {
         case "new-todo" /*getting the message from the selection*/:
           todos = [{ text: message.value, completed: false }, ...todos];
           break;
+        case "token":
+          authToken = message.value;
+          const response = await fetch(`http://localhost:3002/me`, {
+            headers: {
+              authorization: `Bearer ${authToken}`,
+            },
+          });
+          const data = await response.json();
+          user = data.user;
+          loading = false;
       }
     });
-    const response = await fetch(`http://localhost:3002/me`,{
-      headers:{
-          authorization: `Bearer ${accessToken}`
-      }
-    });
-    const data = await response.json();
-    user = data.user;
-    loading = false;
+    ts_vscode.postMessage({ type: "get-token", value: undefined });
   });
 </script>
 
@@ -35,7 +44,7 @@
   <div>loading</div>
 {:else if user}
   <pre>
-  {JSON.stringify(user,null,2)}
+  {JSON.stringify(user, null, 2)}
 </pre>
 {:else}
   <div>no user is logged in</div>

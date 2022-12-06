@@ -59,6 +59,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showErrorMessage(data.value);
           break;
         }
+        case "get-token": {
+          webviewView.webview.postMessage({
+            type: "token",
+            value: TokenManager.getToken(),
+          });
+          break;
+        }
       }
     });
   }
@@ -103,7 +110,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <script nonce="${nonce}">
           const ts_vscode = acquireVsCodeApi();
           const apiBaseUrl = ${JSON.stringify(apiBaseUrl)};
-          const accessToken = ${JSON.stringify(TokenManager.getToken())}
         </script>
       </head>
       <body>

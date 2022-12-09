@@ -1,32 +1,30 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { User } from "../types";
+  import { apiBaseUrl } from "../../src/constants";
+  /*component imports */
+  import Todos from "./Todos.svelte";
 
   /*types*/
   type todos = {
     text: string;
     completed: boolean;
   };
-  /*types*/
 
   /*variables*/
-  let todos: todos[] = [];
   let text: string = "";
   let loading: boolean = true;
-  let user: { name: string; id: number } | null = null;
+  let user: User | null = null;
   let authToken: string = "";
-  /*variables*/
+
 
   onMount(async () => {
-    window.addEventListener("message", async(event) => {
+    window.addEventListener("message", async (event) => {
       const message = event.data;
-
       switch (message.type) {
-        case "new-todo" /*getting the message from the selection*/:
-          todos = [{ text: message.value, completed: false }, ...todos];
-          break;
         case "token":
           authToken = message.value;
-          const response = await fetch(`http://localhost:3002/me`, {
+          const response = await fetch(`${apiBaseUrl}/me`, {
             headers: {
               authorization: `Bearer ${authToken}`,
             },
@@ -43,55 +41,18 @@
 {#if loading}
   <div>loading</div>
 {:else if user}
-  <pre>
-  {JSON.stringify(user, null, 2)}
-</pre>
+  <Todos {user} {authToken} />
+  <button
+    on:click={() => {
+      authToken = "";
+      user = null;
+      ts_vscode.postMessage({ type: "logout", value: undefined });
+    }}>Logout</button
+  >
 {:else}
-  <div>no user is logged in</div>
+  <button
+    on:click={() => {
+      ts_vscode.postMessage({ type: "authenticate", value: undefined });
+    }}>Log in with Github</button
+  >
 {/if}
-
-<form
-  on:submit|preventDefault={() => {
-    todos = [{ text, completed: false }, ...todos];
-    text = "";
-  }}
->
-  <input bind:value={text} />
-</form>
-
-<!-- /*for getting raw output*/
-<pre>
-    {JSON.stringify(todos,null,2)}
-</pre> -->
-<!-- class={completed ? "completed" : ""} -->
-
-{#each todos as { text, completed } (text)}
-  <ul>
-    <li
-      class:completed
-      on:click={() => {
-        completed = !completed;
-      }}
-    >
-      {text}
-    </li>
-  </ul>
-{/each}
-
-<button
-  on:click={() => {
-    ts_vscode.postMessage({ type: "onInfo", value: "Success" });
-  }}
-  >Success
-</button>
-<button
-  on:click={() => {
-    ts_vscode.postMessage({ type: "onError", value: "Error" });
-  }}>Error</button
->
-
-<style>
-  .completed {
-    text-decoration: line-through;
-  }
-</style>

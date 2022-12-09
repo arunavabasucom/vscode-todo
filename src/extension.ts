@@ -1,10 +1,8 @@
-//www.youtube.com/watch?v=a5DX5pQ9p5M
 import * as vscode from "vscode";
 import { auth } from "./auth";
 import { HelloWorldPanel } from "./HelloWorldPanel";
 import { SidebarProvider } from "./SidebarProvider";
 import { TokenManager } from "./TokenModel";
-
 
 export function activate(context: vscode.ExtensionContext) {
   /*using global_state we are going to set the value*/
@@ -74,9 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("vscode-todo.helloWorld", () => {
       /* webview panel >> view */
-      vscode.window.showInformationMessage(
-        `Token:` + TokenManager.getToken()
-      );
+      vscode.window.showInformationMessage(`Token:` + TokenManager.getToken());
       HelloWorldPanel.createOrShow(context.extensionUri);
     })
   );

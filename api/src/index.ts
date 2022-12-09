@@ -9,6 +9,8 @@ import { __prod__ } from "./constants";
 import { User } from "./Entities/User";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import cors from "cors";
+import { Todo } from "./Entities/Todo";
+import { isAuth } from "./isAuth";
 
 /*loading env*/
 dotenv.config();
@@ -31,7 +33,7 @@ dotenv.config();
   });
   app.use(cors({ origin: "*" }));
   app.use(passport.initialize());
-
+  app.use(express.json()); /*parses it to a json object*/
   passport.use(
     new GitHubStrategy(
       {
@@ -85,14 +87,11 @@ dotenv.config();
 
   app.get("/me", async (req, res) => {
     const authHeader = req.headers.authorization;
-
     if (!authHeader) {
       res.send({ user: null });
       return;
     }
-
     const token = authHeader.split(" ")[1];
-
     if (!token) {
       res.send({ user: null });
       return;
@@ -110,7 +109,41 @@ dotenv.config();
       res.send({ user: null });
       return;
     }
-    const user = await User.find({ where: { id: userId } });
+    const user = await User.findOne({ where: { id: userId } });
     res.send({ user });
+  });
+  /*All the todo operations */
+  /*creating todo*/
+  app.post("/todo", isAuth, async (req: any, res) => {
+    /*for validation we can check */
+    // if(req.body.text.length > 0) {}
+    console.log(req.body);
+    const todo = await Todo.create({
+      text: req.body.text,
+      creatorId: req.userId,
+    } as Todo).save();
+    res.send({ todo });
+  });
+  /*getting todo*/
+  app.get("/todo", isAuth, async (req: any, res) => {
+    const todos = await Todo.find({
+      where: { creatorId: req.userId },
+      order: { id: "DESC" },
+    });
+    res.send({ todos });
+  });
+  /*updating todo*/
+  app.put("/todo", async (req, res) => {
+    const todo = await Todo.findOne({ where: { id: req.body.id } });
+    if (!todo) {
+      res.send({ todo: null });
+      return;
+    }
+    if (todo.creatorId !== req.body.id) {
+      throw new Error ("not authenticated");
+    }
+    todo.completed = !todo.completed;
+    await todo.save();
+    res.send({ todo });
   });
 })();

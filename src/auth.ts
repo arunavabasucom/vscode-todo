@@ -4,7 +4,7 @@ import * as polka from "polka";
 import { TokenManager } from "./TokenModel";
 /*express -> polka*/
 
-export function auth() {
+export function auth(fn?: () => void) {
   const app = polka();
   app.get("/auth/:token", async (req, res) => {
     const { token } = req.params; /*:token -> stored in token inside req.param*/
@@ -13,11 +13,12 @@ export function auth() {
       /*if token is null*/
       res.end(`<h1>Something went wrong</h1>`);
     }
-      console.log(token);
-      await TokenManager.setToken(token);
-      res.end(`<h1>Login successful</h1>`);
-      /*we don't excepting any more request we are going to close the port */
-      (app as any).server.close();
+    console.log(token);
+    await TokenManager.setToken(token);
+    res.end(`<h1>Login successful</h1>`);
+    /*we don't excepting any more request we are going to close the port */
+    (app as any).server.close();
+    fn && fn();
   });
 
   app.listen(54321, (err: Error) => {
@@ -26,7 +27,7 @@ export function auth() {
     } else {
       vscode.commands.executeCommand(
         "vscode.open",
-        vscode.Uri.parse(apiBaseUrl)
+        vscode.Uri.parse(`${apiBaseUrl}/auth/github/`)
       );
     }
   });

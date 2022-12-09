@@ -1,2 +1,3 @@
 <Script lang="ts" />
-<h1>Hello from svelte new hi !!!!</h1>
+<h1>Welcome to vscode todo</h1>
+

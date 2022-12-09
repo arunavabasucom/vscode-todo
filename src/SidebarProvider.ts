@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { auth } from "./auth";
 import { apiBaseUrl } from "./constants";
 import { getNonce } from "./getNonce";
 import { TokenManager } from "./TokenModel";
@@ -44,6 +45,28 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         //   break;
         // }
         /*onInfo-> takes the value and return information message*/
+
+        /*listening for the auth button clicked */
+        case "authenticate": {
+          auth(() => {
+            webviewView.webview.postMessage({
+              type: "token",
+              value: TokenManager.getToken(),
+            });
+          });
+          break;
+        }
+        case "get-token": {
+          webviewView.webview.postMessage({
+            type: "token",
+            value: TokenManager.getToken(),
+          });
+          break;
+        }
+        case "logout": {
+          TokenManager.setToken("");
+          break;
+        }
         case "onInfo": {
           if (!data.value) {
             return;
@@ -57,13 +80,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             return;
           }
           vscode.window.showErrorMessage(data.value);
-          break;
-        }
-        case "get-token": {
-          webviewView.webview.postMessage({
-            type: "token",
-            value: TokenManager.getToken(),
-          });
           break;
         }
       }
@@ -109,7 +125,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         <link href="${styleMainUri}" rel="stylesheet">
         <script nonce="${nonce}">
           const ts_vscode = acquireVsCodeApi();
-          const apiBaseUrl = ${JSON.stringify(apiBaseUrl)};
+          const apiBaseUrl = ${JSON.stringify(`${apiBaseUrl}/auth/github/`)};
         </script>
       </head>
       <body>
